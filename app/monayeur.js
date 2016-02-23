@@ -2,43 +2,31 @@
 const _ = require('lodash');
 
 const TYPES_DE_PIECES = [
+  {valeur:25, nom:'quarters'},
   {valeur:10, nom:'dimes'},
   {valeur:5, nom:'nickels'},
   {valeur:1, nom:'pennies'}
 ];
 
-
 module.exports = function(montantEnDollar) {
-  var combinaisons = [];
   if (montantEnDollar === 0) {
-    return combinaisons;
+    return [];
   }
-  var cents = montantEnDollar * 100;
-
-  let merde = extrait(TYPES_DE_PIECES[0], cents, {quarters:0});
-
-  merde.forEach((tuple) => {
-    let tempALaCon = extrait(TYPES_DE_PIECES[1], tuple.reste, tuple.combinaison);
-    tempALaCon.forEach((tuple) => {
-      let finalement = extraitLesPennies(tuple.reste, tuple.combinaison);
-      combinaisons = combinaisons.concat(finalement.combinaison);
-    });
-  });
-  return combinaisons;
+  const cents = montantEnDollar * 100;
+  return _.map(
+    _.reduce(TYPES_DE_PIECES, extrait, [{reste: cents, combinaison:{}}])
+    , 'combinaison');
 };
 
 
-function extrait(type, montant, combinaison) {
-  let résultats = [];
-  for(var coins = 0; coins <= parseInt(montant / type.valeur); coins++) {
-    let reste = montant-(coins*type.valeur);
-    let combi = {};
-    combi[type.nom] = coins;
-    résultats.push({reste:reste, combinaison: _.merge(combi, combinaison)});
-  }
-  return résultats;
-}
-
-function extraitLesPennies(montant, combinaison) {
-  return {reste:0, combinaison: _.merge({pennies:montant}, combinaison)};
+function extrait(tuples, type) {
+  return _.flatMap(tuples, (tuple) => {
+    if(type.nom === 'pennies') {
+      return [{reste:0, combinaison: _.merge({pennies:tuple.reste}, tuple.combinaison)}];
+    }
+    return _.map(_.range(0, parseInt(tuple.reste / type.valeur)+1), (coins) => {
+      let reste = tuple.reste-(coins*type.valeur);
+      return {reste:reste, combinaison: _.merge({[type.nom]: coins}, tuple.combinaison)};
+    });
+  });
 }
