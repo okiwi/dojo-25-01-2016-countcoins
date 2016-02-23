@@ -60,4 +60,11 @@ describe('monayeur', function() {
       expect(combinaisons).to.deep.contain({quarters: 0, dimes: 1, nickels:0, pennies:1});
   });
 
+  it.skip('donne les combinaisons pour 25 pennies', function() {
+      var combinaisons = rendLaMonnaie(0.25);
+
+      expect(combinaisons).to.have.length(13);
+      expect(combinaisons).to.deep.contain({quarters: 1, dimes: 0, nickels:0, pennies:0});
+  });
+
 });

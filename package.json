@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha **/*.spec.js"
+    "test": "mocha **/*.spec.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.4.1",
     "mocha": "^2.3.4"
+  },
+  "dependencies": {
+    "lodash": "^4.5.1"
   }
 }
